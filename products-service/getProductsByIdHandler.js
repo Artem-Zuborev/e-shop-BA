@@ -1,29 +1,42 @@
 'use strict';
-const fs = require('fs');
-const path = require('path');
+
+const AWS = require('aws-sdk');
+const dynamodb = new AWS.DynamoDB.DocumentClient();
+
+const productTableName = 'aws_db_zubarau';
+const stocksTableName = 'stocks';
 
 module.exports.getProductsById = async (event) => {
     const productId = event.pathParameters.id;
-    const filePath = path.join(__dirname, 'assets', 'products.json');
-    const products = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
-    const product = products.find((p) => p.id === productId);
+    try {
+        const products = await dynamodb.scan({ TableName: productTableName }).promise();
+        const stocks = await dynamodb.scan({ TableName: stocksTableName }).promise();
 
-    if (!product) {
+        const items = products.Items.map((product) => {
+            const stock = stocks.Items.find((stock) => stock.product_id === product.id);
+            return { ...product, count: stock ? stock.count : 0 };
+        });
+
+        const product = items.find((product) => product.id === productId);
+
+        if (!product) {
+            return {
+                statusCode: 404,
+                body: JSON.stringify({
+                    message: 'Product not found',
+                }),
+            };
+        }
+
         return {
-            statusCode: 404,
-            body: JSON.stringify({
-                message: `Product with id ${productId} not found`,
-            }),
+            statusCode: 200,
+            body: JSON.stringify(product),
+        };
+    } catch (err) {
+        return {
+            statusCode: 500,
+            body: err.message,
         };
     }
-
-    return {
-        statusCode: 200,
-        body: JSON.stringify(product),
-    };
 };
-
-
-
-
