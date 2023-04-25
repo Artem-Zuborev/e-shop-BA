@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "frontCache": "sls invalidateCloudFrontCache",
+    "deploy": "sls deploy"
   },
   "author": "",
   "license": "ISC",
@@ -12,6 +14,7 @@
     "aws-lambda": "^1.0.7",
     "aws-sdk": "^2.1348.0",
     "serverless-finch": "^4.0.0",
-    "serverless-single-page-app-plugin": "file:./serverless-single-page-app-plugin"
+    "serverless-single-page-app-plugin": "file:./serverless-single-page-app-plugin",
+    "uuid": "^9.0.0"
   }
 }
