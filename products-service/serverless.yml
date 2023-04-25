@@ -76,6 +76,14 @@ functions:
       - http:
           path: /products
           method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: true
 
   getProductsById:
     handler: getProductsByIdHandler.getProductsById
@@ -83,6 +91,14 @@ functions:
       - http:
           path: /products/{id}
           method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: true
 
   addItemsInDB:
     handler: addItemsInDB.addProduct
